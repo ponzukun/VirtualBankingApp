@@ -10,3 +10,12 @@
 .rem2 {
     font-size: 2rem;
 }
+
+/* effect */
+.hover {
+cursor: pointer;
+}
+
+.hover:hover {
+    opacity: 0.9;
+}
