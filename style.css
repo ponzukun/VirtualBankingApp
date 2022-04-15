@@ -13,6 +13,9 @@
 .rem2 {
     font-size: 2rem;
 }
+.display-inline {
+    display: inline!important;
+}
 
 /* effect */
 .hover {
