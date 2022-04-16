@@ -13,26 +13,73 @@
     </head>
     <body>
         <div class="vh-100 d-flex justify-content-center align-items-center bg-dark">
-            <div class="p-4 bg-white">
-                <h1>Please type your information below</h1>
-                <form>
-                    <div class="form-row mt-4">
-                        <div class="col">
-                            <input type="text" class="form-control" placeholder="First name">
+            <div class="d-flex justify-content-center align-items-center col-md-7 col-10">
+                <div id="initial-form" class="p-4 bg-white text-center col-12">
+                    <h2>Please type your information below</h2>
+                    <form>
+                        <div class="form-row mt-4">
+                            <div class="form-group col">
+                                <input type="text" name="userFirstName" class="form-control" placeholder="First name" required>
+                            </div>
+                            <div class="form-group col">
+                                <input type="text" name="userLastName" class="form-control" placeholder="Last name" required>
+                            </div>
                         </div>
-                        <div class="col">
-                            <input type="text" class="form-control" placeholder="Last name">
+                        <div class="form-group">
+                            <input type="email" name="userEmail" class="form-control" placeholder="Email" required>
                         </div>
-                      </div>
-                    <div class="form-group mt-3">
-                        <input type="email" class="form-control" placeholder="Enter your Bank ID">
-                    </div>
-                    <div class="form-group">
-                        <input type="text" class="form-control" placeholder="Enter your first deposit">
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-block">Submit</button>
-                </form>
-            </div>
+                        <div class="form-group">
+                            <input type="number" name="userFirstDeposit" class="form-control" placeholder="Enter your first deposit" required>
+                        </div>
+                        <div class="form-group">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="userAccountType" id="userAccountType1" value="savings" required>
+                                <label class="form-check-label" for="userAccountType1">Savings</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="userAccountType" id="userAccountType2" value="checkings" required>
+                                <label class="form-check-label" for="userAccountType2">Checkings</label>
+                            </div>
+                        </div>    
+                        <button type="submit" class="btn btn-primary btn-block">Submit</button>
+                    </form>
+                </div>
+                <!-- # main.html -->
+                <div id="bank-page">
+                    <!-- <div id="bankPage" class="bg-green text-white text-center pt-md-4 px-4 pt-1 col-12"> -->
+                        <!-- <div class="pb-2 pb-md-4 text-right">
+                            <div class="py-1">Your Name: Kaiden Herman</div>
+                            <div class="py-1">Your Back ID: 12345678</div>
+                            <div class="py-1">Your First Deposit: $205.00</div>
+                        </div>
+                        <div class="bg-danger d-flex py-1 py-md-2 flex-wrap">
+                            <div class="col-md-7 col-12 rem2">Available Balance</div>
+                            <div class="col-md-5 col-12 rem2">$12,345</div>
+                        </div>
+                        <div class="my-3 d-flex justify-content-center flex-wrap col-12">
+                            <div class="py-1 py-md-3 px-0 px-md-1 col-lg-4 col-12">
+                                <div id="withdrawBtn" class="bg-blue p-3 hover">
+                                    <div class="mb-2">WITHDRAWAL</div>
+                                    <i class="fa-3x fas fa-wallet"></i>
+                                </div>
+                            </div>
+                            <div class="py-1 py-md-3 px-0 px-md-1 col-lg-4 col-12">
+                                <div id="depositBtn" class="bg-blue p-3 hover">
+                                    <div class="mb-2">DEPOSIT</div>
+                                    <i class="fa-3x fas fa-coins"></i>
+                                </div>
+                            </div>
+                            <div class="py-1 py-md-3 px-0 px-md-1 col-lg-4 col-12">
+                                <div id="comeBackLaterBtn" class="bg-blue p-3 hover">
+                                    <div class="mb-2">COME BACK LATER</div>
+                                    <i class="fa-3x fas fa-home"></i>
+                                </div>
+                            </div>
+                        </div> -->
+                    <!-- </div> -->
+                </div>
+            </div> 
         </div>
+        <script type="module" src="./js/main.js"></script>
     </body>
 </html>
