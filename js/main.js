@@ -168,10 +168,11 @@ function backNextBtn(back, next) {
 }
 
 function withdrawController() {
-    config.bankPage.innerHTML = "";
     displayNone(config.bankPage);
-    config.withdrawPage.innerHTML = "";
     displayBlock(config.withdrawPage);
+    
+    config.bankPage.innerHTML = "";
+    config.withdrawPage.innerHTML = "";
     config.withdrawPage.append(withdrawPage());
 }
 
