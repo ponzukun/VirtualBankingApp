@@ -14,7 +14,8 @@ const config = {
     initialForm : document.getElementById("initial-form"),
     bankForm : document.getElementById("bank-form"),
     bankPage : document.getElementById("bank-page"),
-    withdrawPage : document.getElementById("withdraw-page")
+    withdrawPage : document.getElementById("withdraw-page"),
+    withdrawConfirmPage : document.getElementById("withdraw-confirm-page")
 }
 
 function bankFormSubmit(event) {
@@ -169,7 +170,7 @@ function backNextBtn(back, next) {
             <button id="withdrawGoBack" class="col-12 btn btn-outline-primary back-btn">${back}</button>
         </div>
         <div class="pr-0 col-6">
-            <button id="withdrawProcess" class="col-12 btn btn-outline-primary">${next}</button>
+            <button id="withdrawProcess" class="col-12 btn btn-outline-primary next-btn">${next}</button>
         </div>
     `;
     return container;
@@ -203,6 +204,13 @@ function withdrawPage(bankAccount) {
         displayBlock(config.bankPage)
         config.bankPage.append(mainBankPage(bankAccount))
     });
+    
+    // nextを押すと次のページに遷移する処理
+    container.querySelector(".next-btn").addEventListener("click", () => {
+        displayNone(config.withdrawPage);
+        displayBlock(config.withdrawConfirmPage)
+        config.withdrawConfirmPage.append(billDialog("The money you are going to take is ...", billInputs, "data-bill"))
+    });
 
     return container;
 }
@@ -215,4 +223,29 @@ function billSummation(inputElementNodeList, multiplierAttribute) {
         summation += value >= 0 ? value : 0;
     });
     return summation;
+}
+
+function billDialog(title, inputElementNodeList, multiplierAttribute) {
+    let container = document.createElement("div");
+    container.innerHTML = `
+        <h2>${title}</h2>
+        <div class="d-flex flex-column align-items-center">
+            <div class="col-10 bg-info my-2 p-1 bill-dialog">
+            </div>
+        </div>
+    `;
+
+    inputElementNodeList.forEach(ele => {
+        let div = document.createElement("div");
+        div.classList.add("m-1", "p-2", "border", "border-white", "text-right", "text-white", "rem1p5");
+        div.innerHTML = `${ele.value} &#x2613; $${ele.getAttribute(multiplierAttribute)}`;
+        container.querySelector(".bill-dialog").append(div);
+    });
+
+    let billTotal = document.createElement("div");
+    billTotal.classList.add("m-1", "p-2", "text-white", "text-right", "rem1p5");
+    billTotal.innerHTML = `Total: $${billSummation(inputElementNodeList, multiplierAttribute)}`;
+    container.querySelector(".bill-dialog").append(billTotal);
+
+    return container;
 }
