@@ -1,11 +1,13 @@
 import { BankAccount } from "./bankaccount.js";
 
 function displayNone(ele) {
+    ele.classList.remove("d-block");
     ele.classList.add("d-none");
 }
 
 function displayBlock(ele) {
     ele.classList.remove("d-none");
+    ele.classList.add("d-block");
 }
 
 const config = {
@@ -85,7 +87,7 @@ function mainBankPage(userBankAccount) {
     `;
 
     menuCon.querySelectorAll("#withdrawBtn").item(0).addEventListener("click", function(){
-        withdrawController();
+        withdrawController(userBankAccount);
     });
     menuCon.querySelectorAll("#depositBtn").item(0).addEventListener("click", function(){
         window.alert("deposit");
@@ -164,7 +166,7 @@ function backNextBtn(back, next) {
     container.classList.add("d-flex", "justify-content-between");
     container.innerHTML = `
         <div class="pl-0 col-6">
-            <button id="withdrawGoBack" class="col-12 btn btn-outline-primary">${back}</button>
+            <button id="withdrawGoBack" class="col-12 btn btn-outline-primary back-btn">${back}</button>
         </div>
         <div class="pr-0 col-6">
             <button id="withdrawProcess" class="col-12 btn btn-outline-primary">${next}</button>
@@ -173,16 +175,16 @@ function backNextBtn(back, next) {
     return container;
 }
 
-function withdrawController() {
+function withdrawController(bankAccount) {
     displayNone(config.bankPage);
     displayBlock(config.withdrawPage);
 
     config.bankPage.innerHTML = "";
     config.withdrawPage.innerHTML = "";
-    config.withdrawPage.append(withdrawPage());
+    config.withdrawPage.append(withdrawPage(bankAccount));
 }
 
-function withdrawPage() {
+function withdrawPage(bankAccount) {
     let container = document.createElement("div");
     container.append(billInputSelector("Please Enter The Withdrawal Amount"));
 
@@ -195,6 +197,13 @@ function withdrawPage() {
     });
 
     container.append(backNextBtn("Go Back", "Next"));
+    // backを押すと前のページに戻る処理
+    container.querySelector(".back-btn").addEventListener("click", () => {
+        displayNone(config.withdrawPage);
+        displayBlock(config.bankPage)
+        config.bankPage.append(mainBankPage(bankAccount))
+    });
+
     return container;
 }
 
