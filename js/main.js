@@ -79,9 +79,7 @@ function mainBankPage(userBankAccount) {
     `;
 
     menuCon.querySelectorAll("#withdrawBtn").item(0).addEventListener("click", function(){
-        config.bankPage.classList.add("d-none");
-        config.withdrawPage.classList.remove("d-none");
-        config.withdrawPage.append(billInputSelector("Please Enter The Withdrawal Amount"));
+        withdrawPage(config.bankPage, config.withdrawPage);
     });
     menuCon.querySelectorAll("#depositBtn").item(0).addEventListener("click", function(){
         window.alert("deposit");
@@ -170,4 +168,10 @@ function backNextBtn(back, next) {
         </div>
     `;
     return container;
+}
+
+function withdrawPage(prev, next) {
+    prev.classList.add("d-none");
+    next.classList.remove("d-none");
+    next.append(billInputSelector("Please Enter The Withdrawal Amount"));
 }
