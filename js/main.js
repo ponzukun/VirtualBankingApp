@@ -79,7 +79,7 @@ function mainBankPage(userBankAccount) {
     `;
 
     menuCon.querySelectorAll("#withdrawBtn").item(0).addEventListener("click", function(){
-        withdrawPage(config.bankPage, config.withdrawPage);
+        withdrawController();
     });
     menuCon.querySelectorAll("#depositBtn").item(0).addEventListener("click", function(){
         window.alert("deposit");
@@ -150,9 +150,6 @@ function billInputSelector(title) {
             <div class="p-2 border border-white text-center text-white rem2">$0.00</div>
         </div>
     `;
-
-    container.append(backNextBtn("Go Back", "Next"));
-
     return container;
 }
 
@@ -170,8 +167,25 @@ function backNextBtn(back, next) {
     return container;
 }
 
-function withdrawPage(prev, next) {
-    prev.classList.add("d-none");
-    next.classList.remove("d-none");
-    next.append(billInputSelector("Please Enter The Withdrawal Amount"));
+function withdrawController() {
+    config.bankPage.innerHTML = "";
+    displayNone(config.bankPage);
+    config.withdrawPage.innerHTML = "";
+    displayBlock(config.withdrawPage);
+    config.withdrawPage.append(withdrawPage());
+}
+
+function withdrawPage() {
+    let container = document.createElement("div");
+    container.append(billInputSelector("Please Enter The Withdrawal Amount"));
+    container.append(backNextBtn("Go Back", "Next"));
+    return container;
+}
+
+function displayNone(ele) {
+    ele.classList.add("d-none");
+}
+
+function displayBlock(ele) {
+    ele.classList.remove("d-none");
 }
