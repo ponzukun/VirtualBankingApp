@@ -1,5 +1,13 @@
 import { BankAccount } from "./bankaccount.js";
 
+function displayNone(ele) {
+    ele.classList.add("d-none");
+}
+
+function displayBlock(ele) {
+    ele.classList.remove("d-none");
+}
+
 const config = {
     initialForm : document.getElementById("initial-form"),
     bankForm : document.getElementById("bank-form"),
@@ -29,8 +37,6 @@ function initializeUserAccount() {
         getRandomInteger(1, Math.pow(10,8)),
         parseInt(form.querySelectorAll(`input[name="userFirstDeposit"]`).item(0).value),
     );
-
-    console.log(userBankAccount);
 
     config.initialForm.classList.add("d-none");
     config.bankPage.classList.remove("d-none");
@@ -102,7 +108,7 @@ function billInputSelector(title) {
                     <label for="100-dollars" class="col-12">$100</label>
                 </div>
                 <div class="col-8 pr-0">
-                    <input class="col-12" type="number" id="100-dollars" name="100-dollars" min="0" value="">
+                    <input class="text-right col-12 bill-input" data-bill="100" type="number" id="100-dollars" name="100-dollars" min="0" value="0">
                 </div>
             </div>
             <div class="mb-2 d-flex justify-content-between">
@@ -110,7 +116,7 @@ function billInputSelector(title) {
                     <label for="50-dollars" class="col-12">$50</label>
                 </div>
                 <div class="col-8 pr-0">
-                    <input class="col-12" type="number" id="50-dollars" name="50-dollars" min="0" value="">
+                    <input class="text-right col-12 bill-input" data-bill="50" type="number" id="50-dollars" name="50-dollars" min="0" value="0">
                 </div>
             </div>
             <div class="mb-2 d-flex justify-content-between">
@@ -118,7 +124,7 @@ function billInputSelector(title) {
                     <label for="20-dollars" class="col-12">$20</label>
                 </div>
                 <div class="col-8 pr-0">
-                    <input class="col-12" type="number" id="20-dollars" name="20-dollars" min="0" value="">
+                    <input class="text-right col-12 bill-input" data-bill="20" type="number" id="20-dollars" name="20-dollars" min="0" value="0">
                 </div>
             </div>
             <div class="mb-2 d-flex justify-content-between">
@@ -126,7 +132,7 @@ function billInputSelector(title) {
                     <label for="10-dollars" class="col-12">$10</label>
                 </div>
                 <div class="col-8 pr-0">
-                    <input class="col-12" type="number" id="10-dollars" name="10-dollars" min="0" value="">
+                    <input class="text-right col-12 bill-input" data-bill="10" type="number" id="10-dollars" name="10-dollars" min="0" value="0">
                 </div>
             </div>
             <div class="mb-2 d-flex justify-content-between">
@@ -134,7 +140,7 @@ function billInputSelector(title) {
                     <label for="5-dollars" class="col-12">$5</label>
                 </div>
                 <div class="col-8 pr-0">
-                    <input class="col-12" type="number" id="5-dollars" name="5-dollars" min="0" value="">
+                    <input class="text-right col-12 bill-input" data-bill="5" type="number" id="5-dollars" name="5-dollars" min="0" value="0">
                 </div>
             </div>
             <div class="mb-2 d-flex justify-content-between">
@@ -142,12 +148,12 @@ function billInputSelector(title) {
                     <label for="1-dollars" class="col-12">$1</label>
                 </div>
                 <div class="col-8 pr-0">
-                    <input class="col-12" type="number" id="1-dollars" name="1-dollars" min="0" value="">
+                    <input class="text-right col-12 bill-input" data-bill="1" type="number" id="1-dollars" name="1-dollars" min="0" value="0">
                 </div>
             </div>
         </div>
         <div class="bg-info my-2 p-1">
-            <div class="p-2 border border-white text-center text-white rem2">$0.00</div>
+            <div id="withdraw-sum" class="p-2 border border-white text-center text-white rem2">$0.00</div>
         </div>
     `;
     return container;
@@ -170,7 +176,7 @@ function backNextBtn(back, next) {
 function withdrawController() {
     displayNone(config.bankPage);
     displayBlock(config.withdrawPage);
-    
+
     config.bankPage.innerHTML = "";
     config.withdrawPage.innerHTML = "";
     config.withdrawPage.append(withdrawPage());
@@ -179,14 +185,25 @@ function withdrawController() {
 function withdrawPage() {
     let container = document.createElement("div");
     container.append(billInputSelector("Please Enter The Withdrawal Amount"));
+
+    let withdrawSum = container.querySelector("#withdraw-sum");
+    let billInputs = container.querySelectorAll(".bill-input");
+    billInputs.forEach(bill => {
+        bill.addEventListener("change", () => {
+            withdrawSum.innerHTML = `$${billSummation(billInputs, "data-bill").toString()}`;
+        });
+    });
+
     container.append(backNextBtn("Go Back", "Next"));
     return container;
 }
 
-function displayNone(ele) {
-    ele.classList.add("d-none");
-}
-
-function displayBlock(ele) {
-    ele.classList.remove("d-none");
+function billSummation(inputElementNodeList, multiplierAttribute) {
+    let summation = 0;
+    inputElementNodeList.forEach(ele => {
+        let value = parseInt(ele.value);
+        value = ele.hasAttribute(multiplierAttribute) ? parseInt(ele.getAttribute(multiplierAttribute)) * value : value;
+        summation += value >= 0 ? value : 0;
+    });
+    return summation;
 }
