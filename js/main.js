@@ -88,7 +88,7 @@ function mainBankPage(userBankAccount) {
     `;
 
     menuCon.querySelectorAll("#withdrawBtn").item(0).addEventListener("click", function(){
-        withdrawController(userBankAccount);
+        withdrawController(userBankAccount, config.bankPage);
     });
     menuCon.querySelectorAll("#depositBtn").item(0).addEventListener("click", function(){
         window.alert("deposit");
@@ -176,11 +176,11 @@ function backNextBtn(back, next) {
     return container;
 }
 
-function withdrawController(bankAccount) {
-    displayNone(config.bankPage);
+function withdrawController(bankAccount, currPage) {
+    displayNone(currPage);
     displayBlock(config.withdrawPage);
 
-    config.bankPage.innerHTML = "";
+    currPage.innerHTML = "";
     config.withdrawPage.innerHTML = "";
     config.withdrawPage.append(withdrawPage(bankAccount));
 }
@@ -209,7 +209,7 @@ function withdrawPage(bankAccount) {
     container.querySelector(".next-btn").addEventListener("click", () => {
         displayNone(config.withdrawPage);
         displayBlock(config.withdrawConfirmPage)
-        config.withdrawConfirmPage.append(billDialog("The money you are going to take is ...", billInputs, "data-bill"))
+        config.withdrawConfirmPage.append(billDialog("The money you are going to take is ...", billInputs, "data-bill", bankAccount))
     });
 
     return container;
@@ -225,7 +225,7 @@ function billSummation(inputElementNodeList, multiplierAttribute) {
     return summation;
 }
 
-function billDialog(title, inputElementNodeList, multiplierAttribute) {
+function billDialog(title, inputElementNodeList, multiplierAttribute, bankAccount) {
     let container = document.createElement("div");
     container.innerHTML = `
         <h2>${title}</h2>
@@ -246,6 +246,12 @@ function billDialog(title, inputElementNodeList, multiplierAttribute) {
     billTotal.classList.add("m-1", "p-2", "text-white", "text-right", "rem1p5");
     billTotal.innerHTML = `Total: $${billSummation(inputElementNodeList, multiplierAttribute)}`;
     container.querySelector(".bill-dialog").append(billTotal);
+
+    container.append(backNextBtn("Go Back", "Confirm"));
+    // backを押すと前のページに戻る処理
+    container.querySelector(".back-btn").addEventListener("click", () => {
+        withdrawController(bankAccount, config.withdrawConfirmPage);
+    });
 
     return container;
 }
