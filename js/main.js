@@ -14,7 +14,7 @@ const config = {
     initialForm : document.getElementById("initial-form"),
     bankForm : document.getElementById("bank-form"),
     bankPage : document.getElementById("bank-page"),
-    withdrawPage : document.getElementById("withdraw-page"),
+    sidePage : document.getElementById("side-page"),
     withdrawConfirmPage : document.getElementById("withdraw-confirm-page")
 }
 
@@ -32,7 +32,7 @@ function getRandomInteger(min, max) {
 
 function initializeUserAccount() {
     const form = config.bankForm;
-    let userBankAccount = new BankAccount(
+    let bankAccount = new BankAccount(
         form.querySelectorAll(`input[name="userFirstName"]`).item(0).value,
         form.querySelectorAll(`input[name="userLastName"]`).item(0).value,
         form.querySelectorAll(`input[name="userEmail"]`).item(0).value,
@@ -41,11 +41,12 @@ function initializeUserAccount() {
         parseInt(form.querySelectorAll(`input[name="userFirstDeposit"]`).item(0).value),
     );
 
-    config.bankPage.append(mainBankPage(userBankAccount, config.initialForm));
+    config.bankPage.append(mainBankPage(bankAccount, config.initialForm));
 }
 
-function mainBankPage(userBankAccount, currPage) {
+function mainBankPage(bankAccount, currPage) {
     displayNone(currPage);
+    currPage.innerHTML = "";
     displayBlock(config.bankPage);
 
     let container = document.createElement("div");
@@ -53,16 +54,16 @@ function mainBankPage(userBankAccount, currPage) {
     let infoCon = document.createElement("div");
     infoCon.classList.add("pb-2", "pb-md-4", "text-right");
     infoCon.innerHTML = `
-        <div class="py-1">Your Name: ${userBankAccount.getFullName()}</div>
-        <div class="py-1">Your Back ID: ${userBankAccount.accountNumber}</div>
-        <div class="py-1">Your First Deposit: ${userBankAccount.initialDeposit}</div>
+        <div class="py-1">Your Name: ${bankAccount.getFullName()}</div>
+        <div class="py-1">Your Back ID: ${bankAccount.accountNumber}</div>
+        <div class="py-1">Your First Deposit: ${bankAccount.initialDeposit}</div>
     `;
 
     let balanceCon = document.createElement("div");
     balanceCon.classList.add("bg-danger", "d-flex", "flex-wrap", "py-1", "py-md-2");
     balanceCon.innerHTML = `
         <div class="col-md-7 col-12 rem2">Available Balance</div>
-        <div class="col-md-5 col-12 rem2">$${userBankAccount.money}</div>
+        <div class="col-md-5 col-12 rem2">$${bankAccount.money}</div>
     `;
 
     let menuCon = document.createElement("div");
@@ -89,7 +90,8 @@ function mainBankPage(userBankAccount, currPage) {
     `;
 
     menuCon.querySelectorAll("#withdrawBtn").item(0).addEventListener("click", function(){
-        withdrawController(userBankAccount, config.bankPage);
+        // withdrawController(userBankAccount, config.bankPage);
+        sideBankSwitch(bankAccount, config.bankPage, "withdraw");
     });
     menuCon.querySelectorAll("#depositBtn").item(0).addEventListener("click", function(){
         window.alert("deposit");
@@ -177,14 +179,35 @@ function backNextBtn(back, next) {
     return container;
 }
 
-function withdrawController(bankAccount, currPage) {
+function sideBankSwitch(bankAccount, currPage, pageTitle) {
     displayNone(currPage);
-    displayBlock(config.withdrawPage);
+    displayBlock(config.sidePage);
 
     currPage.innerHTML = "";
-    config.withdrawPage.innerHTML = "";
-    config.withdrawPage.append(withdrawPage(bankAccount));
+    config.sidePage.innerHTML = "";
+
+    switch (pageTitle) {
+        case 'withdraw':
+            config.sidePage.append(withdrawPage(bankAccount));
+            break;
+        case 'deposit':
+            // config.sidePage.append(depositPage(bankAccount));
+            break;
+        case 'come back later':
+            // config.sidePage.append(comeBackLaterPage(bankAccount));
+            break;
+        default:
+            window.alert(`Sorry, we are out of ${pageTitle}.`);
+      }
 }
+// function withdrawController(bankAccount, currPage) {
+//     displayNone(currPage);
+//     displayBlock(config.withdrawPage);
+
+//     currPage.innerHTML = "";
+//     config.withdrawPage.innerHTML = "";
+//     config.withdrawPage.append(withdrawPage(bankAccount));
+// }
 
 function withdrawPage(bankAccount) {
     let container = document.createElement("div");
@@ -201,14 +224,14 @@ function withdrawPage(bankAccount) {
     container.append(backNextBtn("Go Back", "Next"));
     // backを押すと前のページに戻る処理
     container.querySelector(".back-btn").addEventListener("click", () => {
-        displayNone(config.withdrawPage);
-        displayBlock(config.bankPage);
-        config.bankPage.append(mainBankPage(bankAccount));
+        // displayNone(config.sidePage);
+        // displayBlock(config.bankPage);
+        config.bankPage.append(mainBankPage(bankAccount, config.sidePage));
     });
     
     // nextを押すと次のページに遷移する処理
     container.querySelector(".next-btn").addEventListener("click", () => {
-        displayNone(config.withdrawPage);
+        displayNone(config.sidePage);
         displayBlock(config.withdrawConfirmPage);
 
         let confirmDialog = document.createElement("div");
@@ -229,7 +252,7 @@ function withdrawPage(bankAccount) {
 
         // Go Backを押すと前のページに戻る処理
         withdrawConfirmBtns.querySelector(".back-btn").addEventListener("click", () => {
-            withdrawController(bankAccount, config.withdrawConfirmPage);
+            sideBankSwitch(bankAccount, config.withdrawConfirmPage, "withdraw");
         });
 
         // Confirmを押すとbankPageのページに戻る処理
@@ -281,3 +304,47 @@ function billDialog(title, inputElementNodeList, multiplierAttribute, bankAccoun
 
     return container;
 }
+
+function depositPage(bankAccount) {
+
+}
+
+// <div class="px-3 px-md-5 py-4 bg-white">
+// <h2>Please Enter The Deposit Amount</h2>
+// <form>
+//     <div class="my-3">
+//         <span>$</span>
+//         <input class="form-control display-inline col-11" type="number" id="" name="" min="0" value="" placeholder="105.00">
+//     </div>
+//     <div class="d-flex justify-content-between">
+//         <div class="pl-0 col-6">
+//             <button type="submit" class="col-12 btn btn-outline-primary">Go Back</button>
+//         </div>
+//         <div class="pr-0 col-6">
+//             <button type="button" class="col-12 btn btn-outline-primary">Next</button>
+//         </div>
+//     </div>
+// </form>
+// </div>
+
+function comeBackLaterPage(bankAccount) {
+
+}
+
+// <div class="px-3 px-md-5 py-4 bg-white">
+// <h2>How many days will you be gone?</h2>
+// <form>
+//     <div class="my-3">
+//         <input class="form-control display-inline col-11" type="number" id="" name="" min="0" value="" placeholder="4">
+//         <span>days</span>
+//     </div>
+//     <div class="d-flex justify-content-between">
+//         <div class="pl-0 col-6">
+//             <button type="submit" class="col-12 btn btn-outline-primary">Go Back</button>
+//         </div>
+//         <div class="pr-0 col-6">
+//             <button type="button" class="col-12 btn btn-outline-primary">Next</button>
+//         </div>
+//     </div>
+// </form>
+// </div>
