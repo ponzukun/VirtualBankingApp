@@ -30,6 +30,6 @@ export class BankAccount {
     }
 
     simulateTimePassage(days) {
-        this.money = Math.floor(this.money * (1 + this.depositInterest) * days/365);
+        this.money += Math.floor(this.money * (this.depositInterest) * days/365);
     }
 }

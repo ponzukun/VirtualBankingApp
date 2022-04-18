@@ -234,7 +234,7 @@ function withdrawPage(bankAccount) {
             config.sidePage.append(withdrawPage(bankAccount));
         });
 
-        // Confirmを押すとbankPageのページに戻る処理
+        // Confirmを押すとbankPageのページに更新
         withdrawConfirmBtns.querySelector(".next-btn").addEventListener("click", () => {
             bankAccount.withdraw(withdrawAmount);
             bankReturn(bankAccount);
@@ -302,12 +302,12 @@ function depositPage(bankAccount) {
     // Go Back、Nextボタンを追加します。
     let depositConfirmBtns = backNextBtn("Go Back", "Next");
 
-    // Go Backを押すと前のページに戻る処理
+    // Go Backを押すとbankPageに戻る処理
     depositConfirmBtns.querySelector(".back-btn").addEventListener("click", () => {
         bankReturn(bankAccount);
     });
 
-    // Nextを押すとbankPageのページに戻る処理
+    // Nextを押すと確認のページに戻る処理
     depositConfirmBtns.querySelector(".next-btn").addEventListener("click", () => {
         config.sidePage.innerHTML = "";
         
@@ -332,7 +332,7 @@ function depositPage(bankAccount) {
             config.sidePage.append(withdrawPage(bankAccount));
         });
         
-        // Confirmを押すとbankPageのページに戻る処理
+        // Confirmを押すとbankPageのページに更新
         depositConfirmBtns.querySelector(".next-btn").addEventListener("click", () => {
             bankAccount.deposit(billSummation(billInputs, "data-bill"));
             bankReturn(bankAccount);
@@ -358,12 +358,12 @@ function comeBackLaterPage(bankAccount) {
     `;
     // Go Back、Nextボタンを追加します。
     let comeBackLaterConfirmBtns = backNextBtn("Go Back", "Confirm");
-    // Go Backを押すと前のページに戻る処理
+    // Go Backを押すとbankPageに戻る処理
     comeBackLaterConfirmBtns.querySelector(".back-btn").addEventListener("click", () => {
         bankReturn(bankAccount);
     });
     
-    // Confirmを押すと前のページに戻る処理
+    // Confirmを押すとbankPageに更新
     comeBackLaterConfirmBtns.querySelector(".next-btn").addEventListener("click", () => {
         bankAccount.simulateTimePassage(document.getElementById("days").value);
         bankReturn(bankAccount);
