@@ -347,23 +347,28 @@ function depositPage(bankAccount) {
 }
 
 function comeBackLaterPage(bankAccount) {
+    let container = document.createElement("div");
+    container.classList.add("px-3", "px-md-5", "py-4", "bg-white");
+    container.innerHTML = `
+    <h2>How many days will you be gone?</h2>
+    <div class="mt-3 mb-5">
+        <input class="form-control display-inline col-11" type="number" id="days" name="" min="0" value="" placeholder="4">
+        <span>days</span>
+    </div>
+    `;
+    // Go Back、Nextボタンを追加します。
+    let comeBackLaterConfirmBtns = backNextBtn("Go Back", "Confirm");
+    // Go Backを押すと前のページに戻る処理
+    comeBackLaterConfirmBtns.querySelector(".back-btn").addEventListener("click", () => {
+        bankReturn(bankAccount);
+    });
+    
+    // Confirmを押すと前のページに戻る処理
+    comeBackLaterConfirmBtns.querySelector(".next-btn").addEventListener("click", () => {
+        bankAccount.simulateTimePassage(document.getElementById("days").value);
+        bankReturn(bankAccount);
+    });
 
+    container.append(comeBackLaterConfirmBtns);
+    return container;
 }
-
-// <div class="px-3 px-md-5 py-4 bg-white">
-// <h2>How many days will you be gone?</h2>
-// <form>
-//     <div class="my-3">
-//         <input class="form-control display-inline col-11" type="number" id="" name="" min="0" value="" placeholder="4">
-//         <span>days</span>
-//     </div>
-//     <div class="d-flex justify-content-between">
-//         <div class="pl-0 col-6">
-//             <button type="submit" class="col-12 btn btn-outline-primary">Go Back</button>
-//         </div>
-//         <div class="pr-0 col-6">
-//             <button type="button" class="col-12 btn btn-outline-primary">Next</button>
-//         </div>
-//     </div>
-// </form>
-// </div>

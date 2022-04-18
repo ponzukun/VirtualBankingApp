@@ -1,5 +1,6 @@
 export class BankAccount {
     maxWithdrawPercent = 0.2;
+    depositInterest = 0.08;
 
     constructor(firstName, lastName, email, type, accountNumber, money) {
         this.firstName = firstName;
@@ -26,5 +27,9 @@ export class BankAccount {
 
     deposit(amount) {
         this.money += amount;
+    }
+
+    simulateTimePassage(days) {
+        this.money = Math.floor(this.money * (1 + this.depositInterest) * days/365);
     }
 }
