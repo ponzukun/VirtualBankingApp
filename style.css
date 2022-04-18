@@ -7,6 +7,9 @@
 .bg-blue {
     background-color: #1A4567;
 }
+.rem1 {
+    font-size: 1rem;
+}
 .rem1p5 {
     font-size: 1.5rem;
 }
@@ -24,4 +27,15 @@ cursor: pointer;
 
 .hover:hover {
     opacity: 0.9;
+}
+
+/* media */
+@media only screen and (max-width: 480px) {
+    h2 {
+        font-size: 1.5rem;
+    }
+
+    .total-withdraw {
+        font-size: 1rem;
+    }
 }

@@ -201,26 +201,37 @@ function withdrawPage(bankAccount) {
     // backを押すと前のページに戻る処理
     container.querySelector(".back-btn").addEventListener("click", () => {
         displayNone(config.withdrawPage);
-        displayBlock(config.bankPage)
-        config.bankPage.append(mainBankPage(bankAccount))
+        displayBlock(config.bankPage);
+        config.bankPage.append(mainBankPage(bankAccount));
     });
     
     // nextを押すと次のページに遷移する処理
     container.querySelector(".next-btn").addEventListener("click", () => {
         displayNone(config.withdrawPage);
-        displayBlock(config.withdrawConfirmPage)
-        config.withdrawConfirmPage.append(billDialog("The money you are going to take is ...", billInputs, "data-bill", bankAccount))
+        displayBlock(config.withdrawConfirmPage);
 
-        // <div class="d-flex bg-danger py-1 py-md-2 mb-3 text-white">
-        //     <p class="col-8 text-left rem1p5">Total to be withdrawn: </p>
-        //     <p class="col-4 text-right rem1p5">$150</p>
-        // </div>
+        let confirmDialog = document.createElement("div");
+        confirmDialog.append(billDialog("The money you are going to take is ...", billInputs, "data-bill", bankAccount));
 
-        // HTMLを追加し、金額のところに引き落とすことができる金額を表示してください。
-        // confirmDialogコンテナに追加してください。
-        // backNextBtn関数を使って、Go Back、Confirmボタンを追加してください。
-        // ここからJavaScriptを記述してください。
+        let withdrawContainer = document.createElement("div");
+        withdrawContainer.classList.add("d-flex", "bg-danger", "text-white", "mb-3");
+        let total = billSummation(billInputs, "data-bill");
+        withdrawContainer.innerHTML = `
+                <div class="col-8 text-left rem2 total-withdraw">Total to be withdrawn: </div>
+                <div class="col-4 text-right rem2">$${bankAccount.calculateWithdrawAmount(total)}</div>
+        `;
+        confirmDialog.append(withdrawContainer);
 
+        // Go Back、Confirmボタンを追加します。
+        let withdrawConfirmBtns = backNextBtn("Go Back", "Confirm");
+
+        // backを押すと前のページに戻る処理
+        withdrawConfirmBtns.querySelector(".back-btn").addEventListener("click", () => {
+            withdrawController(bankAccount, config.withdrawConfirmPage);
+        });
+        confirmDialog.append(withdrawConfirmBtns);
+        
+        config.withdrawConfirmPage.append(confirmDialog);
     });
 
     return container;
@@ -238,6 +249,7 @@ function billSummation(inputElementNodeList, multiplierAttribute) {
 
 function billDialog(title, inputElementNodeList, multiplierAttribute, bankAccount) {
     let container = document.createElement("div");
+    // container.classList.add("mb-3")
     container.innerHTML = `
         <h2>${title}</h2>
         <div class="d-flex flex-column align-items-center">
@@ -255,14 +267,8 @@ function billDialog(title, inputElementNodeList, multiplierAttribute, bankAccoun
 
     let billTotal = document.createElement("div");
     billTotal.classList.add("m-1", "p-2", "text-white", "text-right", "rem1p5");
-    billTotal.innerHTML = `Total: $${calculateWithdrawAmount(billSummation(inputElementNodeList, multiplierAttribute))}`;
+    billTotal.innerHTML = `Total: $${billSummation(inputElementNodeList, multiplierAttribute)}`;
     container.querySelector(".bill-dialog").append(billTotal);
-
-    container.append(backNextBtn("Go Back", "Confirm"));
-    // backを押すと前のページに戻る処理
-    container.querySelector(".back-btn").addEventListener("click", () => {
-        withdrawController(bankAccount, config.withdrawConfirmPage);
-    });
 
     return container;
 }
