@@ -15,8 +15,12 @@ export class BankAccount {
         return this.firstName + " " + this.lastName;
     }
 
-    calculateWithdrawAmount(withdraw) {
+    calculateWithdrawAmount(amount) {
         let maxWithdrawAmount = Math.floor(this.money * this.maxWithdrawPercent);
-        return withdraw < maxWithdrawAmount ? withdraw : maxWithdrawAmount;
+        return amount < maxWithdrawAmount ? amount : maxWithdrawAmount;
+    }
+
+    withdraw(amount) {
+        this.money -= amount;
     }
 }

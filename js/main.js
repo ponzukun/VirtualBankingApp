@@ -41,12 +41,13 @@ function initializeUserAccount() {
         parseInt(form.querySelectorAll(`input[name="userFirstDeposit"]`).item(0).value),
     );
 
-    config.initialForm.classList.add("d-none");
-    config.bankPage.classList.remove("d-none");
-    config.bankPage.append(mainBankPage(userBankAccount));
+    config.bankPage.append(mainBankPage(userBankAccount, config.initialForm));
 }
 
-function mainBankPage(userBankAccount) {
+function mainBankPage(userBankAccount, currPage) {
+    displayNone(currPage);
+    displayBlock(config.bankPage);
+
     let container = document.createElement("div");
 
     let infoCon = document.createElement("div");
@@ -216,19 +217,27 @@ function withdrawPage(bankAccount) {
         let withdrawContainer = document.createElement("div");
         withdrawContainer.classList.add("d-flex", "bg-danger", "text-white", "mb-3");
         let total = billSummation(billInputs, "data-bill");
+        let withdrawAmount = bankAccount.calculateWithdrawAmount(total);
         withdrawContainer.innerHTML = `
                 <div class="col-8 text-left rem2 total-withdraw">Total to be withdrawn: </div>
-                <div class="col-4 text-right rem2">$${bankAccount.calculateWithdrawAmount(total)}</div>
+                <div class="col-4 text-right rem2">$${withdrawAmount}</div>
         `;
         confirmDialog.append(withdrawContainer);
 
         // Go Back、Confirmボタンを追加します。
         let withdrawConfirmBtns = backNextBtn("Go Back", "Confirm");
 
-        // backを押すと前のページに戻る処理
+        // Go Backを押すと前のページに戻る処理
         withdrawConfirmBtns.querySelector(".back-btn").addEventListener("click", () => {
             withdrawController(bankAccount, config.withdrawConfirmPage);
         });
+
+        // Confirmを押すとbankPageのページに戻る処理
+        withdrawConfirmBtns.querySelector(".next-btn").addEventListener("click", () => {
+            bankAccount.withdraw(withdrawAmount);
+            config.bankPage.append(mainBankPage(bankAccount, config.withdrawConfirmPage));
+        });
+
         confirmDialog.append(withdrawConfirmBtns);
         
         config.withdrawConfirmPage.append(confirmDialog);
