@@ -90,14 +90,16 @@ function mainBankPage(bankAccount, currPage) {
     `;
 
     menuCon.querySelectorAll("#withdrawBtn").item(0).addEventListener("click", function(){
-        // withdrawController(userBankAccount, config.bankPage);
-        sideBankSwitch(bankAccount, config.bankPage, "withdraw");
+        sidePageSwitch(config.bankPage);
+        config.sidePage.append(withdrawPage(bankAccount));
     });
     menuCon.querySelectorAll("#depositBtn").item(0).addEventListener("click", function(){
-        window.alert("deposit");
+        // sidePageSwitch(bankAccount, config.bankPage);
+        // config.sidePage.append(depositPage(bankAccount));
     });
     menuCon.querySelectorAll("#comeBackLaterBtn").item(0).addEventListener("click", function(){
-        window.alert("come back later");
+        // sidePageSwitch(bankAccount, config.bankPage);
+        // config.sidePage.append(comeBackLaterPage(bankAccount));
     });
 
     container.append(infoCon, balanceCon, menuCon);
@@ -179,35 +181,12 @@ function backNextBtn(back, next) {
     return container;
 }
 
-function sideBankSwitch(bankAccount, currPage, pageTitle) {
+function sidePageSwitch(currPage) {
     displayNone(currPage);
     displayBlock(config.sidePage);
-
     currPage.innerHTML = "";
     config.sidePage.innerHTML = "";
-
-    switch (pageTitle) {
-        case 'withdraw':
-            config.sidePage.append(withdrawPage(bankAccount));
-            break;
-        case 'deposit':
-            // config.sidePage.append(depositPage(bankAccount));
-            break;
-        case 'come back later':
-            // config.sidePage.append(comeBackLaterPage(bankAccount));
-            break;
-        default:
-            window.alert(`Sorry, we are out of ${pageTitle}.`);
-      }
 }
-// function withdrawController(bankAccount, currPage) {
-//     displayNone(currPage);
-//     displayBlock(config.withdrawPage);
-
-//     currPage.innerHTML = "";
-//     config.withdrawPage.innerHTML = "";
-//     config.withdrawPage.append(withdrawPage(bankAccount));
-// }
 
 function withdrawPage(bankAccount) {
     let container = document.createElement("div");
@@ -224,8 +203,6 @@ function withdrawPage(bankAccount) {
     container.append(backNextBtn("Go Back", "Next"));
     // backを押すと前のページに戻る処理
     container.querySelector(".back-btn").addEventListener("click", () => {
-        // displayNone(config.sidePage);
-        // displayBlock(config.bankPage);
         config.bankPage.append(mainBankPage(bankAccount, config.sidePage));
     });
     
@@ -252,7 +229,8 @@ function withdrawPage(bankAccount) {
 
         // Go Backを押すと前のページに戻る処理
         withdrawConfirmBtns.querySelector(".back-btn").addEventListener("click", () => {
-            sideBankSwitch(bankAccount, config.withdrawConfirmPage, "withdraw");
+            sidePageSwitch(config.withdrawConfirmPage);
+            config.sidePage.append(withdrawPage(bankAccount));
         });
 
         // Confirmを押すとbankPageのページに戻る処理
@@ -281,7 +259,6 @@ function billSummation(inputElementNodeList, multiplierAttribute) {
 
 function billDialog(title, inputElementNodeList, multiplierAttribute, bankAccount) {
     let container = document.createElement("div");
-    // container.classList.add("mb-3")
     container.innerHTML = `
         <h2>${title}</h2>
         <div class="d-flex flex-column align-items-center">
