@@ -23,4 +23,8 @@ export class BankAccount {
     withdraw(amount) {
         this.money -= amount;
     }
+
+    deposit(amount) {
+        this.money += amount;
+    }
 }

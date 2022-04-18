@@ -14,8 +14,7 @@ const config = {
     initialForm : document.getElementById("initial-form"),
     bankForm : document.getElementById("bank-form"),
     bankPage : document.getElementById("bank-page"),
-    sidePage : document.getElementById("side-page"),
-    withdrawConfirmPage : document.getElementById("withdraw-confirm-page")
+    sidePage : document.getElementById("side-page")
 }
 
 function bankFormSubmit(event) {
@@ -41,14 +40,12 @@ function initializeUserAccount() {
         parseInt(form.querySelectorAll(`input[name="userFirstDeposit"]`).item(0).value),
     );
 
-    config.bankPage.append(mainBankPage(bankAccount, config.initialForm));
+    displayNone(config.initialForm);
+    displayBlock(config.bankPage);
+    config.bankPage.append(mainBankPage(bankAccount));
 }
 
-function mainBankPage(bankAccount, currPage) {
-    displayNone(currPage);
-    currPage.innerHTML = "";
-    displayBlock(config.bankPage);
-
+function mainBankPage(bankAccount) {
     let container = document.createElement("div");
 
     let infoCon = document.createElement("div");
@@ -90,16 +87,16 @@ function mainBankPage(bankAccount, currPage) {
     `;
 
     menuCon.querySelectorAll("#withdrawBtn").item(0).addEventListener("click", function(){
-        sidePageSwitch(config.bankPage);
+        sidePageSwitch();
         config.sidePage.append(withdrawPage(bankAccount));
     });
     menuCon.querySelectorAll("#depositBtn").item(0).addEventListener("click", function(){
-        // sidePageSwitch(bankAccount, config.bankPage);
-        // config.sidePage.append(depositPage(bankAccount));
+        sidePageSwitch();
+        config.sidePage.append(depositPage(bankAccount));
     });
     menuCon.querySelectorAll("#comeBackLaterBtn").item(0).addEventListener("click", function(){
-        // sidePageSwitch(bankAccount, config.bankPage);
-        // config.sidePage.append(comeBackLaterPage(bankAccount));
+        sidePageSwitch();
+        config.sidePage.append(comeBackLaterPage(bankAccount));
     });
 
     container.append(infoCon, balanceCon, menuCon);
@@ -161,7 +158,7 @@ function billInputSelector(title) {
             </div>
         </div>
         <div class="bg-info my-2 p-1">
-            <div id="withdraw-sum" class="p-2 border border-white text-center text-white rem2">$0.00</div>
+            <div id="totalBillAmount" class="p-2 border border-white text-center text-white rem2">$0.00</div>
         </div>
     `;
     return container;
@@ -172,52 +169,56 @@ function backNextBtn(back, next) {
     container.classList.add("d-flex", "justify-content-between");
     container.innerHTML = `
         <div class="pl-0 col-6">
-            <button id="withdrawGoBack" class="col-12 btn btn-outline-primary back-btn">${back}</button>
+            <button class="col-12 btn btn-outline-primary back-btn">${back}</button>
         </div>
         <div class="pr-0 col-6">
-            <button id="withdrawProcess" class="col-12 btn btn-outline-primary next-btn">${next}</button>
+            <button class="col-12 btn btn-outline-primary next-btn">${next}</button>
         </div>
     `;
     return container;
 }
 
-function sidePageSwitch(currPage) {
-    displayNone(currPage);
+function sidePageSwitch() {
+    displayNone(config.bankPage);
     displayBlock(config.sidePage);
-    currPage.innerHTML = "";
+    config.bankPage.innerHTML = "";
     config.sidePage.innerHTML = "";
+}
+
+function bankReturn(bankAccount) {
+    displayNone(config.sidePage);
+    displayBlock(config.bankPage);
+    config.bankPage.innerHTML = "";
+    config.bankPage.append(mainBankPage(bankAccount));
 }
 
 function withdrawPage(bankAccount) {
     let container = document.createElement("div");
     container.append(billInputSelector("Please Enter The Withdrawal Amount"));
 
-    let withdrawSum = container.querySelector("#withdraw-sum");
     let billInputs = container.querySelectorAll(".bill-input");
     billInputs.forEach(bill => {
         bill.addEventListener("change", () => {
-            withdrawSum.innerHTML = `$${billSummation(billInputs, "data-bill").toString()}`;
+            document.getElementById("totalBillAmount").innerHTML = `$${billSummation(billInputs, "data-bill").toString()}`;
         });
     });
 
     container.append(backNextBtn("Go Back", "Next"));
     // backを押すと前のページに戻る処理
     container.querySelector(".back-btn").addEventListener("click", () => {
-        config.bankPage.append(mainBankPage(bankAccount, config.sidePage));
+        bankReturn(bankAccount);
     });
     
     // nextを押すと次のページに遷移する処理
     container.querySelector(".next-btn").addEventListener("click", () => {
-        displayNone(config.sidePage);
-        displayBlock(config.withdrawConfirmPage);
+        config.sidePage.innerHTML = "";
 
         let confirmDialog = document.createElement("div");
-        confirmDialog.append(billDialog("The money you are going to take is ...", billInputs, "data-bill", bankAccount));
+        confirmDialog.append(billDialog("The money you are going to take is ...", billInputs, "data-bill"));
 
         let withdrawContainer = document.createElement("div");
         withdrawContainer.classList.add("d-flex", "bg-danger", "text-white", "mb-3");
-        let total = billSummation(billInputs, "data-bill");
-        let withdrawAmount = bankAccount.calculateWithdrawAmount(total);
+        let withdrawAmount = bankAccount.calculateWithdrawAmount(billSummation(billInputs, "data-bill"));
         withdrawContainer.innerHTML = `
                 <div class="col-8 text-left rem2 total-withdraw">Total to be withdrawn: </div>
                 <div class="col-4 text-right rem2">$${withdrawAmount}</div>
@@ -229,19 +230,19 @@ function withdrawPage(bankAccount) {
 
         // Go Backを押すと前のページに戻る処理
         withdrawConfirmBtns.querySelector(".back-btn").addEventListener("click", () => {
-            sidePageSwitch(config.withdrawConfirmPage);
+            config.sidePage.innerHTML = "";
             config.sidePage.append(withdrawPage(bankAccount));
         });
 
         // Confirmを押すとbankPageのページに戻る処理
         withdrawConfirmBtns.querySelector(".next-btn").addEventListener("click", () => {
             bankAccount.withdraw(withdrawAmount);
-            config.bankPage.append(mainBankPage(bankAccount, config.withdrawConfirmPage));
+            bankReturn(bankAccount);
         });
 
         confirmDialog.append(withdrawConfirmBtns);
         
-        config.withdrawConfirmPage.append(confirmDialog);
+        config.sidePage.append(confirmDialog);
     });
 
     return container;
@@ -257,7 +258,7 @@ function billSummation(inputElementNodeList, multiplierAttribute) {
     return summation;
 }
 
-function billDialog(title, inputElementNodeList, multiplierAttribute, bankAccount) {
+function billDialog(title, inputElementNodeList, multiplierAttribute) {
     let container = document.createElement("div");
     container.innerHTML = `
         <h2>${title}</h2>
@@ -268,10 +269,12 @@ function billDialog(title, inputElementNodeList, multiplierAttribute, bankAccoun
     `;
 
     inputElementNodeList.forEach(ele => {
-        let div = document.createElement("div");
-        div.classList.add("m-1", "p-2", "border", "border-white", "text-right", "text-white", "rem1p5");
-        div.innerHTML = `${ele.value} &#x2613; $${ele.getAttribute(multiplierAttribute)}`;
-        container.querySelector(".bill-dialog").append(div);
+        if(0 < parseInt(ele.value)) {
+            let div = document.createElement("div");
+            div.classList.add("m-1", "p-2", "border", "border-white", "text-right", "text-white", "rem1p5");
+            div.innerHTML = `${ele.value} &#x2613; $${ele.getAttribute(multiplierAttribute)}`;
+            container.querySelector(".bill-dialog").append(div);
+        }
     });
 
     let billTotal = document.createElement("div");
@@ -283,26 +286,65 @@ function billDialog(title, inputElementNodeList, multiplierAttribute, bankAccoun
 }
 
 function depositPage(bankAccount) {
+    let container = document.createElement("div");
+    container.classList.add("px-3", "px-md-5", "py-4", "bg-white");
+    let depositContainer = document.createElement("div");
+    container.append(depositContainer);
 
+    depositContainer.append(billInputSelector("Please Enter The Deposit Amount"));
+    let billInputs = container.querySelectorAll(".bill-input");
+    billInputs.forEach(bill => {
+        bill.addEventListener("change", () => {
+            document.getElementById("totalBillAmount").innerHTML = `$${billSummation(billInputs, "data-bill").toString()}`;
+        });
+    });
+
+    // Go Back、Nextボタンを追加します。
+    let depositConfirmBtns = backNextBtn("Go Back", "Next");
+
+    // Go Backを押すと前のページに戻る処理
+    depositConfirmBtns.querySelector(".back-btn").addEventListener("click", () => {
+        bankReturn(bankAccount);
+    });
+
+    // Nextを押すとbankPageのページに戻る処理
+    depositConfirmBtns.querySelector(".next-btn").addEventListener("click", () => {
+        config.sidePage.innerHTML = "";
+        
+        let confirmDialog = document.createElement("div");
+        confirmDialog.append(billDialog("The money you are going to deposit is ...", billInputs, "data-bill"));
+
+        let depositContainer = document.createElement("div");
+        depositContainer.classList.add("d-flex", "bg-danger", "text-white", "mb-3");
+        depositContainer.innerHTML = `
+                <div class="col-8 text-left rem2 total-withdraw">Total to be withdrawn: </div>
+                <div class="col-4 text-right rem2">$${billSummation(billInputs, "data-bill")}</div>
+        `;
+        confirmDialog.append(depositContainer);
+
+        
+        // Go Back、Confirmボタンを追加します。
+        let depositConfirmBtns = backNextBtn("Go Back", "Confirm");
+        
+        // Go Backを押すと前のページに戻る処理
+        depositConfirmBtns.querySelector(".back-btn").addEventListener("click", () => {
+            config.sidePage.innerHTML = "";
+            config.sidePage.append(withdrawPage(bankAccount));
+        });
+        
+        // Confirmを押すとbankPageのページに戻る処理
+        depositConfirmBtns.querySelector(".next-btn").addEventListener("click", () => {
+            bankAccount.deposit(billSummation(billInputs, "data-bill"));
+            bankReturn(bankAccount);
+        });
+
+        confirmDialog.append(depositConfirmBtns);
+        config.sidePage.append(confirmDialog);
+    });
+
+    depositContainer.append(depositConfirmBtns);
+    return container;
 }
-
-// <div class="px-3 px-md-5 py-4 bg-white">
-// <h2>Please Enter The Deposit Amount</h2>
-// <form>
-//     <div class="my-3">
-//         <span>$</span>
-//         <input class="form-control display-inline col-11" type="number" id="" name="" min="0" value="" placeholder="105.00">
-//     </div>
-//     <div class="d-flex justify-content-between">
-//         <div class="pl-0 col-6">
-//             <button type="submit" class="col-12 btn btn-outline-primary">Go Back</button>
-//         </div>
-//         <div class="pr-0 col-6">
-//             <button type="button" class="col-12 btn btn-outline-primary">Next</button>
-//         </div>
-//     </div>
-// </form>
-// </div>
 
 function comeBackLaterPage(bankAccount) {
 
