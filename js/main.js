@@ -210,6 +210,17 @@ function withdrawPage(bankAccount) {
         displayNone(config.withdrawPage);
         displayBlock(config.withdrawConfirmPage)
         config.withdrawConfirmPage.append(billDialog("The money you are going to take is ...", billInputs, "data-bill", bankAccount))
+
+        // <div class="d-flex bg-danger py-1 py-md-2 mb-3 text-white">
+        //     <p class="col-8 text-left rem1p5">Total to be withdrawn: </p>
+        //     <p class="col-4 text-right rem1p5">$150</p>
+        // </div>
+
+        // HTMLを追加し、金額のところに引き落とすことができる金額を表示してください。
+        // confirmDialogコンテナに追加してください。
+        // backNextBtn関数を使って、Go Back、Confirmボタンを追加してください。
+        // ここからJavaScriptを記述してください。
+
     });
 
     return container;
@@ -244,7 +255,7 @@ function billDialog(title, inputElementNodeList, multiplierAttribute, bankAccoun
 
     let billTotal = document.createElement("div");
     billTotal.classList.add("m-1", "p-2", "text-white", "text-right", "rem1p5");
-    billTotal.innerHTML = `Total: $${billSummation(inputElementNodeList, multiplierAttribute)}`;
+    billTotal.innerHTML = `Total: $${calculateWithdrawAmount(billSummation(inputElementNodeList, multiplierAttribute))}`;
     container.querySelector(".bill-dialog").append(billTotal);
 
     container.append(backNextBtn("Go Back", "Confirm"));
